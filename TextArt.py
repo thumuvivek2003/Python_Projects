@@ -1,8 +1,8 @@
 #Developed By Vivek
 name = "Vivek"
 Name = name
-Sym = "⚫"
-Sym2 = "⚽"
+Sym = "**"
+Sym2 = "__"
 ll = 5
 
 
