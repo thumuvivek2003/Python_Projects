@@ -31,21 +31,50 @@ class AutomationConfig:
     paste_hotkey: tuple = ("command", "v")
     send_key: str = "enter"
 
-    # Prompt prefix
-    prompt_prefix: str = (
-        "I am mastering DSA Two Pointers for coding interviews. "
-        "Explain this topic in a clear, structured way using "
-        "(skip any part if not applicable): "
-        "Intuition (real-world analogy), "
-        "Core definition, "
-        "What is it?, "
-        "Why this?, "
-        "Clear explanation, "
-        "Common mistakes, "
-        "Interview insight, "
-        "One-line learning outcome and trigger on "
-    )
-
+    # Prompt prefixes
+    prompt_prefixes: Dict[str, str] = None
+    DEFAULT_PROMPT_PREFIXES = {
+        "concept": (
+            "I am mastering DSA for coding interviews. "
+            "Explain this topic in a clear, structured way using "
+            "(skip any part if not applicable): "
+            "Intuition (real-world analogy), "
+            "Core definition, "
+            "What is it?, "
+            "Why this?, "
+            "Clear explanation, "
+            "Common mistakes, "
+            "Interview insight, "
+            "One-line learning outcome and trigger on "
+        ),
+    
+        "problem": (
+            "I am preparing for DSA coding interviews. "
+            "Explain the following LeetCode problem using: "
+            "Intuition, "
+            "Core idea, "
+            "Step-by-step logic, "
+            "Dry run, "
+            "Edge cases, "
+            "Common mistakes, "
+            "Time & space complexity, "
+            "Interview takeaway. "
+            "Problem: "
+        ),
+    
+        "hybrid": (
+            "I am mastering advanced DSA patterns for interviews. "
+            "Explain this hybrid concept clearly using: "
+            "Intuition, "
+            "Binary Search perspective, "
+            "Greedy feasibility logic, "
+            "Why binary search on answer works, "
+            "Common mistakes, "
+            "Interview insight, "
+            "One-line trigger. "
+            "Topic: "
+        )
+    }
 
 # ==============================
 # PROMPT LOADER MODULE
@@ -83,16 +112,17 @@ def wait_with_dots(seconds: int, interval: int = 5):
     print(" done.")
 
 
-def run_automation(prompts: List[str], config: AutomationConfig):
+def run_automation(prompts: List[str], config: AutomationConfig,prefix_type: str):
     """
     Main runner that sends all prompts sequentially.
     """
     print(f"Loaded {len(prompts)} prompts")
     print(f"⏳ You have {config.initial_switch_delay} seconds to switch to Chrome...")
     time.sleep(config.initial_switch_delay)
+    prefix = config.prompt_prefixes.get(prefix_type,'concept')
 
     for index, raw_prompt in enumerate(prompts, start=1):
-        full_prompt = config.prompt_prefix + raw_prompt
+        full_prompt = prefix + raw_prompt
 
         print(f"➡ Sending prompt {index}/{len(prompts)}")
         send_prompt(
@@ -127,7 +157,7 @@ def main():
     )
 
     prompts = load_prompts(PROMPTS)
-    run_automation(prompts, config)
+    run_automation(prompts, config,'concept')
 
 
 if __name__ == "__main__":
